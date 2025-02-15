@@ -8,7 +8,7 @@ export default function PostEdit({ params }: { params: Promise<{ id: number }> }
     const router = useRouter();
     const resolvedParams = use(params);
 
-    const { data: person, isLoading, error } = useSWR(`/queries/person/${resolvedParams.id}`, fetcher);
+    const { data: person, isLoading, error } = useSWR(`/utils/queries/person/${resolvedParams.id}`, fetcher);
     const [name, setName] = useState<string>("");
     const [address, setAddress] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
@@ -25,14 +25,14 @@ export default function PostEdit({ params }: { params: Promise<{ id: number }> }
         e.preventDefault();
         if (name !== "" && address !== "" && phone !== "") {
             const formData = { name, address, phone };
-            const res = await fetch(`/queries/person/${resolvedParams.id}`, {
+            const res = await fetch(`/utils/queries/person/${resolvedParams.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
             const content = await res.json();
             if (content.success > 0) {
-                router.push("/post");
+                router.push("/persons");
             }
         }
     };

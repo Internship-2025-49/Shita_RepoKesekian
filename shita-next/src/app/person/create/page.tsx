@@ -18,7 +18,7 @@ export default function PersonCreate() {
                 phone: phone,
             };
 
-            const add = await fetch('/queries/person', {
+            const add = await fetch('/utils/queries/person', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json'

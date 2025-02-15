@@ -6,7 +6,7 @@ import useSWR from 'swr';
 export default function Detail({ params }: { params: Promise<{ id: number }> }) {
 
     const resolvedParams = use(params);
-    const { data: person, isLoading, error } = useSWR(`/queries/person/${resolvedParams.id}`, fetcher);
+    const { data: person, isLoading, error } = useSWR(`/utils/queries/person/${resolvedParams.id}`, fetcher);
 
     if (isLoading) return <div><span>Loading...</span></div>;
     if (error) return <div><span>Error fetching data</span></div>;
