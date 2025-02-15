@@ -13,11 +13,12 @@ export async function getAuthToken() {
 }
 
 export async function getApiKey(token: any) {
-  const response = await fetch('http://localhost:3000/api/person', {
+  const response = await fetch('http://localhost:3000/api/person/shita', {
       headers: {
           'Authorization': `Bearer ${token}`
       }
   });
+  
   const data = await response.json();
   if (!data.key) {
       throw new Error('Gagal mendapatkan API Key');

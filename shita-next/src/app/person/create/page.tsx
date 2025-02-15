@@ -28,10 +28,11 @@ export default function PersonCreate() {
             
             const content = await add.json();
             if (content.success > 0) {
-                router.push('/person');
+                router.push('/persons');
             }
         }
     };
+    
     return (
         <div className="w-full max-w-7xl m-auto">
             <form className='w-full' onSubmit={addPerson}>

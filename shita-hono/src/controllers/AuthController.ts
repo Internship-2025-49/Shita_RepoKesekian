@@ -1,6 +1,13 @@
 import type { Context } from "hono";
 import { sign } from "hono/jwt";
-const SECRET_KEY = "33c09648982ba1044f11365135a4a597c848f0bf28e4831578e24dc81cd1ad5b";
+
+import dotenv from 'dotenv'
+dotenv.config()
+
+const SECRET_KEY: any = process.env.KEY;
+
+// const SECRET_KEY = "33c09648982ba1044f11365135a4a597c848f0bf28e4831578e24dc81cd1ad5b";
+
 export async function loginUser(c: Context) {
     try {
         const body = await c.req.json();

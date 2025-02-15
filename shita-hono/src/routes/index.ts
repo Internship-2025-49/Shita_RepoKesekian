@@ -6,9 +6,12 @@ import type { JwtVariables } from 'hono/jwt'
 import prisma from '../../prisma/client/index.js';
 import { apiKeyAuth } from '../middleware/auth.js';
 import { bearerAuth } from 'hono/bearer-auth';
-import dotenv from 'dotenv'
 import { loginUser } from '../controllers/AuthController.js';
+
+import dotenv from 'dotenv'
 dotenv.config();
+
+const SECRET_KEY: any = process.env.KEY;
 
 type Variables = JwtVariables
 
@@ -20,10 +23,7 @@ const app = new Hono<{ Variables: Variables }>()
 //     }
 //   )
 // )
-
-
-
-const SECRET_KEY = '33c09648982ba1044f11365135a4a597c848f0bf28e4831578e24dc81cd1ad5b';
+// const SECRET_KEY = '33c09648982ba1044f11365135a4a597c848f0bf28e4831578e24dc81cd1ad5b';
 
 app.post('/login', loginUser);
 
