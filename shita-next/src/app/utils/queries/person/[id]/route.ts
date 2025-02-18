@@ -8,8 +8,9 @@ export async function GET(request : NextRequest,{ params }: { params: { id: numb
     try{
         const token = await getAuthToken();
         const apiKey = await getApiKey(token);
-        
-        const res = await fetch(`http://localhost:3000/api/person/data/${params.id}`, {
+
+        const { id } = await params;
+        const res = await fetch(`http://localhost:3000/api/person/data/${id}`, {
             next: { revalidate: 10 },
             headers: {
                 'Authorization': `Bearer ${token}`,

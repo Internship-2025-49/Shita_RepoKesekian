@@ -1,12 +1,13 @@
+
 //import hono
 import { Hono } from 'hono';
 import { createPerson, deletePerson, getPerson, getPersonById, updatePerson } from '../controllers/PersonController.js';
 import { jwt } from 'hono/jwt'
 import type { JwtVariables } from 'hono/jwt'
-import prisma from '../../prisma/client/index.js';
 import { apiKeyAuth } from '../middleware/auth.js';
 import { bearerAuth } from 'hono/bearer-auth';
 import { loginUser } from '../controllers/AuthController.js';
+import { db } from '../drizzle/index.js'
 
 import dotenv from 'dotenv'
 dotenv.config();
@@ -30,7 +31,7 @@ app.post('/login', loginUser);
 app.use('/data/*', jwt({ secret: SECRET_KEY }));
 
 app.get('/shita', async (c) => {
-  const auth = await prisma.auth.findFirst()
+    const auth = await db.query.Auth.findFirst()
   if (auth) {
       return c.json(
           { 

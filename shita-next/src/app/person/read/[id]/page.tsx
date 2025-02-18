@@ -11,6 +11,9 @@ export default function Detail({ params }: { params: Promise<{ id: number }> }) 
     if (isLoading) return <div><span>Loading...</span></div>;
     if (error) return <div><span>Error fetching data</span></div>;
     if (!person) return <div><span>No user found</span></div>;
+    if(person) {
+        console.info("PERSON Data: ", person)
+    }
     
     return (
         <div className='w-full'>

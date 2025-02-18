@@ -1,5 +1,9 @@
+import { drizzle } from 'drizzle-orm/mysql2';
 import type { Context } from "hono";
-import prisma from "../../prisma/client/index.js";
+// import prisma from "../../prisma/client/index.js";
+import  { Person }  from "../drizzle/schema.js";
+import { asc, eq } from "drizzle-orm";
+import { db } from "../drizzle/index.js";
 
 
 /**
@@ -8,10 +12,10 @@ import prisma from "../../prisma/client/index.js";
 export const getPerson = async (c: Context) => {
     try {
         //get all posts
-        const person = await prisma.person.findMany({ orderBy: { id: 'asc' } });
-
+        // const person = await prisma.person.findMany({ orderBy: { id: 'asc' } });
+        const data = await db.select().from(Person);
         //return JSON
-        return c.json(person);
+        return c.json(data);
 
     } catch (e: unknown) {
         console.error(`Error getting posts: ${e}`);
@@ -30,20 +34,16 @@ export async function createPerson(c: Context) {
     const phone = typeof body['phone'] === 'string' ? body['phone'] : '';
 
   
-    const person = await prisma.person.create({
-      data: {
+    const person = await db.insert(Person).values(
+      {
         name: name,
         address: address,
         phone: phone
       }
-    });
+  );
 
     //return JSON
-    return c.json({
-      statusCode : 201,
-      message: 'Person Created Successfully!',
-      data: person
-    });
+    return c.json(person);
 
   } catch (e: unknown) {
     console.error(`Error creating person: ${e}`);
@@ -57,14 +57,13 @@ export async function getPersonById(c: Context) {
       const personId = parseInt(c.req.param('id'));
 
       //get food by id
-      const person = await prisma.person.findMany({
-          where: { id: personId },
-      });
+      const user = await db.select()
+            .from(Person) 
+            .where(eq(Person.id, personId));
 
-      console.log('Data Of Food: ', person)
 
       //if food not found
-      if (!person) {
+      if (!Person) {
           //return JSON
           return c.json({
               statusCode : 404,
@@ -73,7 +72,7 @@ export async function getPersonById(c: Context) {
       }
 
        //return JSON
-       return c.json(person);
+       return c.json(user);
   } catch (e: unknown) {
       console.error(`Error finding food: ${e}`);
   }
@@ -94,21 +93,20 @@ export async function updatePerson(c: Context) {
       const phone = typeof body['phone'] === 'string' ? body['phone'] : '';
 
       //update food with prisma
-      const person = await prisma.person.update({
-          where: { id: personId },
-          data: {
-            name,
-            address,
-            phone
-          },
-      });
+      await db.update(Person)
+            .set({
+                name: name,
+                address: address,
+                phone: phone,
+            },
+          )
+          .where(eq(Person.id, personId));
+        const updatedPerson = await db.select()
+            .from(Person)
+            .where(eq(Person.id, personId));
 
       //return JSON
-      return c.json({
-          statusCode : 200,
-          message: 'food Updated Successfully!',
-          data: person
-      });
+      return c.json(updatedPerson);
 
   } catch (e: unknown) {
       console.error(`Error updating food: ${e}`);
@@ -122,9 +120,8 @@ export async function deletePerson(c: Context) {
       const personId = parseInt(c.req.param('id'));
 
       //delete food with prisma
-      await prisma.person.delete({
-          where: { id: personId },
-      });
+      await db.delete(Person)
+            .where(eq(Person.id, personId));
 
       //return JSON
       return c.json({
