@@ -1,22 +1,63 @@
 import React from 'react'
-import Link from 'next/link'
-import { PersonModel } from '../types/person'
-export default function Post(params: PersonModel) {
-    return (
-        <tr>
-            <td className='w-10 border border-slate-300 text-center'>{params.id}</td>
-            <td className='border border-slate-300 text-center'>{params.name}</td>
-            <td className='border border-slate-300 text-center'>{params.address}</td>
-            <td className='border border-slate-300 text-center'>{params.phone}</td>
-            <td className='w-52 border border-slate-300'>
-            <span onClick={()=>params.deletePerson(params.id)} className='bg-red-500 p-2 inline-block text-white text-sm'>Delete</span>
-            <Link href={`/person/edit/${params.id}`} className='bg-yellow-500 p-2 inline-block ml-3 text-white text-sm'>Edit</Link>
-            <Link href={`/person/read/${params.id}`} className='bg-yellow-500 p-2 inline-block ml-3 text-white text-sm'>View</Link>
-            </td>
-        </tr>
-    )
-}
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+export default function DataTable<TData, TValue>({ columns, data }: { columns: ColumnDef<TData, TValue>[]; data: TData[] }) {
+    
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    });
 
+    return (
+        <div className="flex justify-center">
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => {
+                            return (
+                            <TableHead key={header.id}>
+                                {header.isPlaceholder
+                                ? null
+                                : flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                    )}
+                            </TableHead>
+                            )
+                        })}
+                        </TableRow>
+                    ))}
+                    </TableHeader>
+                    <TableBody>
+                    {table.getRowModel().rows?.length ? (
+                        table.getRowModel().rows.map((row) => (
+                        <TableRow
+                            key={row.id}
+                            data-state={row.getIsSelected() && "selected"}
+                        >
+                            {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                            ))}
+                        </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                        <TableCell colSpan={columns.length} className="h-24 text-center">
+                            No results.
+                        </TableCell>
+                        </TableRow>
+                    )}
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
+    );
+}
 
 
 

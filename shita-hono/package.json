@@ -2,7 +2,8 @@
   "name": "shita-hono",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "test": "jest"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
@@ -13,9 +14,13 @@
     "mysql2": "^3.12.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.11.17",
+    "drizzle-kit": "^0.30.4",
     "jest": "^29.7.0",
     "prisma": "^5.13.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
     "tsx": "^4.7.1"
   }
 }

@@ -4,68 +4,73 @@ import useSWR from "swr";
 import { fetcher } from "../libs";
 import Link from "next/link";
 import { PersonModel } from "../types/person";
-import Person from "../components/person";
+import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table";
+import DataTable from "../components/person";
 
 export default function Users() {
     const [person, setUsers] = useState<PersonModel[]>([]);
-    const { data, error } = useSWR<{ result: PersonModel[] }>(`/utils/queries/person`, fetcher);
+    const { data, error } = useSWR<{ result: PersonModel[] }>("/utils/queries/person", fetcher);
 
     useEffect(() => {
         console.log("Data fetched:", data);
         if (data && data.result && Array.isArray(data.result)) {
             setUsers(data.result);
-        } else if (data !== undefined) {
-            console.error("Invalid data format:", data);
         }
     }, [data]);
 
-    if (error) {
-        console.error("Error fetching data:", error);
-        return <div>Failed to load</div>;
-    }
+    if (error) return <div>Failed to load</div>;
 
     if (!data) return <div>Loading...</div>;
-    const delete_person: PersonModel['deletePerson'] = async (id: number) => {
+
+    const deletePerson = async (id: number) => {
         const res = await fetch(`/utils/queries/person/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
         });
-        
+
         const content = await res.json();
+
         if (content.success > 0) {
-            setUsers(person.filter((person: PersonModel) => person.id !== id));
+           
+            setUsers(person.filter((person) => person.id !== id));
+
         }
+        
     };
 
+    const columns: ColumnDef<PersonModel>[] = [
+        { accessorKey: "id", header: "ID" },
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "address", header: "Address" },
+        { accessorKey: "phone", header: "Phone" },
+        {
+            header: "Actions",
+            cell: ({ row }) => (
+                <div className="flex gap-2">
+                    <Button variant="destructive" size="sm" onClick={() => deletePerson(row.original.id)}>
+                        Delete
+                    </Button>
+                    <Link href={`/person/edit/${row.original.id}`}>
+                        <Button variant="outline" size="sm">Edit</Button>
+                    </Link>
+                    <Link href={`/person/read/${row.original.id}`}>
+                        <Button variant="outline" size="sm">View</Button>
+                    </Link>
+                </div>
+            ),
+        },
+    ];
+
     return (
-        <div className="w-full max-w-7xl m-auto">
-            <table className="w-full border-collapse border border-slate-400">
-                <caption className="caption-top py-5 font-bold text-green-500 text-2xl">
-                    List Person - Counter: 
-                    <span className="text-red-500 font-bold">{person.length}</span>
-                </caption>
-                <thead>
-                    <tr className="text-center">
-                        <th className="border border-slate-300">ID</th>
-                        <th className="border border-slate-300">Name</th>
-                        <th className="border border-slate-300">Address</th>
-                        <th className="border border-slate-300">Phone</th>
-                        <th className="border border-slate-300">Action Button</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colSpan={6}>
-                            <Link href={`/person/create`} className="bg-green-500 p-2 inline-block text-white">Create</Link>
-                        </td>
-                    </tr>
-                    {person.map((item: PersonModel) => (
-                        <Person key={item.id} {...item} deletePerson={delete_person} />
-                    ))}
-                </tbody>
-            </table>
+        <div className="container mx-auto py-10">
+            <h2 className="text-2xl font-bold text-center mb-5">List Person - Counter: {person.length}</h2>
+            <div className="flex justify-center">
+                <Link href={`/person/create`}>
+                    <Button className="mb-4">Create New</Button>
+                </Link>
+            </div>
+            <DataTable columns={columns} data={person} />
         </div>
     );
 }
