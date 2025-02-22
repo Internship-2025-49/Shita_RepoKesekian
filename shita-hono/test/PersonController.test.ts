@@ -1,21 +1,35 @@
-// import type { Context } from "hono";
-// import test, { describe } from "node:test";
-// import { expect, jest } from '@jest/globals';
+import type { Context } from "hono";
+import test, { describe } from "node:test";
+import { expect, jest } from '@jest/globals';
+import prisma from '../prisma/client/index.js';
 
-// describe('CRUD of Person Table -test', () => {
+export const getPerson = async (c: Context) => {
+    try {
+        //get all posts
+        const person = await prisma.person.findMany({ orderBy: { id: 'asc' } });
+        // const data = await db.select().from(Person);
+        //return JSON
+        return c.json(person);
 
-//     test('getPerson test', async () => {
-//         const getPersonTest = {
-//             json: jest.fn(),
-//         } as unknown as Context;
+    } catch (e: unknown) {
+        console.error(`Error getting posts: ${e}`);
+    }
+}
 
-//         const data = await db.select().from(Person);
+describe('CRUD of Person Table -test', () => {
 
-//         await getPerson(getPersonTest);
+    test('getPerson test', async () => {
+        const getPersonTest = {
+            json: jest.fn(),
+        } as unknown as Context;
 
-//         expect(getPersonTest.json).toHaveBeenCalledWith(data);
-//     });
-// })
+        const data = await prisma.person.findMany();
+
+        await getPerson(getPersonTest);
+
+        expect(getPersonTest.json).toHaveBeenCalledWith(data);
+    });
+})
 
 // //     test('getUserById test', async () => {
 // //         const userId = 1;

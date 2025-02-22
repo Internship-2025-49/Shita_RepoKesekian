@@ -30,10 +30,18 @@ export default function PostEdit({ params }: { params: Promise<{ id: number }> }
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
+
             const content = await res.json();
-            if (content.success > 0) {
-                router.push("/persons");
-            }
+
+            console.log("Form Data: ", formData);
+            console.log("content", content);
+
+            if (content) {
+                router.push("/person");
+                alert("data sudah berhasil di update");
+              } else {
+                alert(content.message);
+              }
         }
     };
 

@@ -32,9 +32,7 @@ export default function Users() {
         const content = await res.json();
 
         if (content.success > 0) {
-           
             setUsers(person.filter((person) => person.id !== id));
-
         }
         
     };
