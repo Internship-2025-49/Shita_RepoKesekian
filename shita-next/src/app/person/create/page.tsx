@@ -73,7 +73,7 @@ export default function PersonCreate() {
                                 </div>
 
                                 <div className='w-full flex justify-center py-2'>
-                                    <Button className="w-80 p-5 text-white border-gray-200 border-[1px] rounded-sm bg-green-400 text-lg" variant="outline" size="sm">Submit</Button>
+                                    <Button className="w-80 p-5 text-white bg-black text-lg" variant="outline" size="sm">Submit</Button>
                                 </div>
                             </div>
                         </form>
