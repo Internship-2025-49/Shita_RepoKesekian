@@ -45,7 +45,7 @@ export default function Users() {
         {
             header: "Actions",
             cell: ({ row }) => (
-                <div className="flex gap-2">
+                <div className="flex gap-5">
                     <Button variant="destructive" size="sm" onClick={() => deletePerson(row.original.id)}>
                         Delete
                     </Button>
@@ -68,7 +68,9 @@ export default function Users() {
                     <Button className="mb-4">Create New</Button>
                 </Link>
             </div>
-            <DataTable columns={columns} data={person} />
+            <div className="w-full overflow-auto">
+                <DataTable columns={columns} data={person} />
+            </div>
         </div>
     );
 }

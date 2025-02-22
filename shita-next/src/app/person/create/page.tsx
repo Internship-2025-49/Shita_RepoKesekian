@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 
 export default function PersonCreate() {
@@ -14,6 +15,7 @@ export default function PersonCreate() {
     const [name, setName] = useState<string>('');
     const [address, setAddress] = useState<string>('');
     const [phone, setPhone] = useState<string>('');
+    const [isOpen, setIsOpen] = useState(false);
     
     const addPerson = async (e: any) => {
         e.preventDefault();
@@ -40,8 +42,7 @@ export default function PersonCreate() {
             console.log("content", content);
 
             if (content) {
-                router.push("/person");
-                alert("data sudah berhasil dibuat");
+                setIsOpen(true);
               } else {
                 alert(content.message);
               }
@@ -49,29 +50,8 @@ export default function PersonCreate() {
     };
     
     return (
-        // <div className="container mx-auto py-10">
-        //     <form className='w-full' onSubmit={addPerson}>
-        //         <span className='font-bold py-2 block text-2xl text-center'>Add Data Person</span>
-        //         <div className='w-full py-2'>
-        //             <label htmlFor="" className='text-sm font-bold py-2 block'>Name</label>
-        //             <input type='text' name='name' className='w-full border-[1px] border-grey-200 p-2 rounded-sm' placeholder='Name' onChange={(e: any) => setName(e.target.value)} />
-        //         </div>
-        //         <div className='w-full py-2'>
-        //             <label htmlFor="" className='text-sm font-bold py-2 block'>Address</label>
-        //             <textarea name='address' className='w-full border-[1px] border-grey-200 p-2 rounded-sm' placeholder='Address' onChange={(e: any) => setAddress(e.target.value)} />
-        //         </div>
-        //         <div className='w-full py-2'>
-        //             <label htmlFor="" className='text-sm font-bold py-2 block'>Phone</label>
-        //             <input type='text' name='phone' className='w-full border-[1px] border-grey-200 p-2 rounded-sm' placeholder='Phone' onChange={(e: any) => setPhone(e.target.value)} />
-        //         </div>
-        //         <div className='w-full py-2'>
-        //             <Button className="w-20 p-2 text-white border-gray-200 border-[1px] rounded-sm bg-green-400">Submit</Button>
-        //         </div>
-        //     </form>
-        // </div>
-
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <span className='font-bold py-2 block text-2xl text-center'>Add Data Person</span>
+            <span className='font-bold py-2 block text-2xl text-center mb-5'>Add Data Person</span>
             <Card className="w-[550px]" onSubmit={addPerson}>
                 <CardHeader>
                     <CardContent>
@@ -100,6 +80,22 @@ export default function PersonCreate() {
                     </CardContent>
                 </CardHeader>
             </Card>
+
+            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Created Person Data Successfully</AlertDialogTitle>
+                        <AlertDialogDescription>You can close this page.</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setIsOpen(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => {
+                            setIsOpen(false);
+                            router.push("/person");
+                        }}>Close</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
         
     );
