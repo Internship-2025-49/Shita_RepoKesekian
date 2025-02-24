@@ -23,12 +23,10 @@ export default function Users() {
     const [personList, setPersonList] = useState<PersonModel[]>([]);
     const { data, error } = useSWR<{ result: PersonModel[] }>("/utils/queries/person", fetcher);
     
-    // State untuk modal edit
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedPerson, setSelectedPerson] = useState<PersonModel | null>(null);
 
-    // Ambil data awal
     useEffect(() => {
         if (data && data.result) {
             setPersonList(data.result);
@@ -38,7 +36,6 @@ export default function Users() {
     if (error) return <div>Failed to load</div>;
     if (!data) return <div>Loading...</div>;
 
-    // Fungsi hapus data
     const deletePerson = async (id: number) => {
         const res = await fetch(`/utils/queries/person/${id}`, {
             method: "DELETE",
@@ -52,13 +49,11 @@ export default function Users() {
         }
     };
 
-    // Fungsi buka modal edit
     const openEditDialog = (person: PersonModel) => {
         setSelectedPerson(person);
         setIsDialogOpen(true);
     };
 
-    // Fungsi update person
     const updatePerson = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedPerson) return;
@@ -74,7 +69,6 @@ export default function Users() {
             setIsAlertOpen(true);
             setIsDialogOpen(false);
 
-            // Perbarui state personList dengan data yang diedit
             setPersonList((prev) =>
                 prev.map((p) => (p.id === selectedPerson.id ? selectedPerson : p))
             );

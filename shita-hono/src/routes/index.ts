@@ -1,16 +1,16 @@
 
 //import hono
 import { Hono } from 'hono';
-import { createPerson, deletePerson, getPerson, getPersonById, updatePerson } from '../controllers/PersonController.js';
+import { createPerson, deletePerson, getPerson, getPersonById, updatePerson } from '../controllers/PersonController';
 import { jwt } from 'hono/jwt'
 import type { JwtVariables } from 'hono/jwt'
-import { apiKeyAuth } from '../middleware/auth.js';
+import { apiKeyAuth } from '../middleware/auth';
 import { bearerAuth } from 'hono/bearer-auth';
-import { loginUser } from '../controllers/AuthController.js';
+import { loginUser } from '../controllers/AuthController';
 import { db } from '../drizzle/index.js'
 
 import dotenv from 'dotenv'
-import prisma from '../../prisma/client/index.js';
+import prisma from '../../prisma/client/index';
 dotenv.config();
 
 const SECRET_KEY: any = process.env.KEY;

@@ -1,20 +1,8 @@
 import type { Context } from "hono";
-import test, { describe } from "node:test";
 import { expect, jest } from '@jest/globals';
-import prisma from '../prisma/client/index.js';
+import prisma from '../prisma/client/index';
+import { getPerson } from "../src/controllers/PersonController";
 
-export const getPerson = async (c: Context) => {
-    try {
-        //get all posts
-        const person = await prisma.person.findMany({ orderBy: { id: 'asc' } });
-        // const data = await db.select().from(Person);
-        //return JSON
-        return c.json(person);
-
-    } catch (e: unknown) {
-        console.error(`Error getting posts: ${e}`);
-    }
-}
 
 describe('CRUD of Person Table -test', () => {
 
