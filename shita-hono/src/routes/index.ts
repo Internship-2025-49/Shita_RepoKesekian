@@ -207,6 +207,39 @@ const updatePersonRoute = createRoute({
 
 app.openapi(updatePersonRoute, updatePerson);
 
+const deletePersonRoute = createRoute({
+  method: 'delete',
+  path: '/api/person/data/{id}',
+  parameters: [
+    {
+      name: 'id',
+      in: 'path',
+      required: true,
+      schema: z.string(),
+    },
+  ],
+  responses: {
+    200: {
+      description: 'Person deleted successfully',
+      content: {
+        'application/json': {
+          schema: z.object({message: z.string() }),
+        },
+      },
+    },
+  },
+  500: {
+    description: 'Internal server error',
+    content: {
+      'application/json': {
+        schema: z.object({ error: z.string() }),
+      },
+    },
+  },
+});
+
+app.openapi(deletePersonRoute, deletePerson);
+
 app.doc('/doc', {
     openapi: '3.0.0',
     info: {
