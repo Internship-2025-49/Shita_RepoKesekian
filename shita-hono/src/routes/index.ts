@@ -73,30 +73,65 @@ app.openapi(
   }
 )
 
-const route = createRoute({
+const getAllPersonsRoute = createRoute({
+method: 'get',
+path: '/api/person/data',
+responses: {
+    200: {
+        description: 'Get all data persons',
+        content: {
+            'application/json': {
+                schema: z.array(personSchema),
+            },
+        },
+    },
+    500: {
+        description: 'Internal Server Error',
+        content: {
+            'application/json': {
+                schema: z.object({ error: z.string() }),
+            },
+        },
+    },
+},
+});
+
+app.openapi(getAllPersonsRoute, getPerson);
+
+const getDataByID = createRoute({
   method: 'get',
-  path: '/api/person/data',
+  path: '/api/person/data/{id}',
+  parameters: [
+    {
+      name: 'id',
+      in: 'path',
+      required: true,
+      schema: {type: 'integer'}
+    },
+  ],
   responses: {
-      200: {
-          description: 'Get all persons',
-          content: {
-              'application/json': {
-                  schema: z.array(personSchema),
-              },
-          },
+    200: {
+      description: 'Get data person by ID',
+      content: {
+        'application/json': {
+          schema: z.object(personSchema.shape),
+        },
       },
-      500: {
-          description: 'Internal Server Error',
-          content: {
-              'application/json': {
-                  schema: z.object({ error: z.string() }),
-              },
-          },
+    },
+    500: {
+      description: 'Internal Server Error',
+      content: {
+        'application/json': {
+          schema: z.object({ error: z.string() }),
+        },
       },
+    },
   },
 });
 
-app.openapi(route, getPerson);
+app.openapi(getDataByID, getPersonById); 
+
+
 
 app.doc('/doc', {
     openapi: '3.0.0',

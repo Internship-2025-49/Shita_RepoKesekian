@@ -51,6 +51,7 @@ export async function createPerson(c: Context) {
 
   } catch (e: unknown) {
     console.error(`Error creating person: ${e}`);
+    return c.json({ error: "Internal Server Error" }, 500);
   }
 }
 
@@ -79,6 +80,7 @@ export async function getPersonById(c: Context) {
        return c.json(person);
   } catch (e: unknown) {
       console.error(`Error finding food: ${e}`);
+      return c.json({ error: "Internal Server Error" }, 500);
   }
 }
 
@@ -118,6 +120,7 @@ export async function updatePerson(c: Context) {
 
   } catch (e: unknown) {
       console.error(`Error updating food: ${e}`);
+      return c.json({ error: "Internal Server Error" }, 500);
   }
 }
 
@@ -155,5 +158,6 @@ export async function deletePerson(c: Context) {
 
   } catch (e: unknown) {
       console.error(`Error deleting person: ${e}`);
+      return c.json({ error: "Internal Server Error" }, 500);
   }
 }
