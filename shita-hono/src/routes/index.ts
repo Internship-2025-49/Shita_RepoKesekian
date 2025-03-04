@@ -165,6 +165,48 @@ const createPersonRoute = createRoute({
 
 app.openapi(createPersonRoute, createPerson);
 
+const updatePersonRoute = createRoute({
+  method: 'put',
+  path: '/api/person/data/{id}',
+  parameters: [
+    {
+      name: 'id',
+      in: 'path',
+      required: true,
+      schema: z.number(),
+    },
+  ],
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: personSchema.omit({ id: true }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: 'Person updated successfully',
+      content: {
+        'application/json': {
+          schema: personSchema,
+        },
+      },
+    },
+  },
+  500: {
+    description: 'Internal server error',
+    content: {
+      'application/json': {
+        schema: z.object({ error: z.string() }),
+      },
+    },
+  },
+});
+
+app.openapi(updatePersonRoute, updatePerson);
+
 app.doc('/doc', {
     openapi: '3.0.0',
     info: {
