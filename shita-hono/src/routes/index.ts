@@ -131,7 +131,39 @@ const getDataByID = createRoute({
 
 app.openapi(getDataByID, getPersonById); 
 
+const createPersonRoute = createRoute({
+  method: 'post',
+  path: '/api/person/data',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: personSchema.omit({ id: true }),
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: 'Person created successfully',
+      content: {
+        'application/json': {
+          schema: personSchema,
+        },
+      },
+    },
+    500: {
+      description: 'Internal server error',
+      content: {
+        'application/json': {
+          schema: z.object({ error: z.string() }),
+        },
+      },
+    },
+  },
+});
 
+app.openapi(createPersonRoute, createPerson);
 
 app.doc('/doc', {
     openapi: '3.0.0',
