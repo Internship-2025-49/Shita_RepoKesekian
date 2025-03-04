@@ -1,5 +1,3 @@
-
-//import hono
 import { Hono } from 'hono';
 import { createPerson, deletePerson, getPerson, getPersonById, updatePerson } from '../controllers/PersonController';
 import { jwt } from 'hono/jwt'
@@ -13,19 +11,18 @@ import dotenv from 'dotenv'
 import prisma from '../../prisma/client/index';
 dotenv.config();
 
+import { zValidator } from '@hono/zod-validator'
+import { OpenAPIHono } from '@hono/zod-openapi'
+import { swaggerUI } from '@hono/swagger-ui'
+import { personSchema } from '../schemas/personSchema';
+
 const SECRET_KEY: any = process.env.KEY;
 
-type Variables = JwtVariables
+// type Variables = JwtVariables
 
-const app = new Hono<{ Variables: Variables }>()
-
-// app.use('/*',jwt(
-//     {
-//       secret: '33c09648982ba1044f11365135a4a597c848f0bf28e4831578e24dc81cd1ad5b',
-//     }
-//   )
-// )
-// const SECRET_KEY = '33c09648982ba1044f11365135a4a597c848f0bf28e4831578e24dc81cd1ad5b';
+// const app = new Hono<{ Variables: Variables }>()
+const app = new Hono()
+// app.use('*', apiKeyAuth)
 
 app.post('/login', loginUser);
 
@@ -45,13 +42,18 @@ app.get('/shita', async (c) => {
   }
 })
 
-app.use('*', apiKeyAuth)
+
 
 app.get('/data', (c) => getPerson(c));
-app.post('/data', (c) => createPerson(c));
+app.post('/data',
+    zValidator('json', personSchema),
+    (c) => createPerson(c)
+);
 app.get('/data/:id', (c) => getPersonById(c));
-app.put('/data/:id', (c) => updatePerson(c)); // Biasain pake PUT 
-app.patch('/data/:id', (c) => updatePerson(c));
+app.put('/data/:id',
+    zValidator('json', personSchema),
+    (c) => updatePerson(c)
+);
 app.delete('/data/:id', (c) => deletePerson(c));
 
 

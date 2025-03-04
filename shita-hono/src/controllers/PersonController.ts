@@ -30,7 +30,13 @@ export async function createPerson(c: Context) {
     const address = typeof body['address'] === 'string' ? body['address'] : '';
     const phone = typeof body['phone'] === 'string' ? body['phone'] : '';
 
-  
+    if (!body.name || !body.address || !body.phone) {
+      return c.json(
+        { error: "All fields are required: name, address, phone" },
+        400 
+      );
+    }
+
     const person = await prisma.person.create({
       data: {
         name: name,
@@ -64,7 +70,7 @@ export async function getPersonById(c: Context) {
           //return JSON
           return c.json({
               statusCode : 404,
-              message: 'ID Food Not Found!',
+              message: 'ID Person Not Found!',
           });
       }
 
@@ -89,6 +95,13 @@ export async function updatePerson(c: Context) {
       const address = typeof body['address'] === 'string' ? body['address'] : '';
       const phone = typeof body['phone'] === 'string' ? body['phone'] : '';
 
+      if (!body.name || !body.address || !body.phone) {
+        return c.json(
+          { error: "All fields are required: name, address, phone" },
+          400 
+        );
+      }
+
       //update food with prisma
       const person = await prisma.person.update({
         where: { id: personId },
@@ -112,6 +125,21 @@ export async function deletePerson(c: Context) {
 
       // Konversi tipe id menjadi number
       const personId = parseInt(c.req.param('id'));
+
+      const person = await prisma.person.findUnique({
+        where: { id: personId },
+      });
+
+      
+      if (!person) {
+        return c.json(
+          {
+            statusCode: 404,
+            message: "Person not found",
+          },
+          404
+        );
+      }
 
       //delete food with prisma
       await prisma.person.delete({

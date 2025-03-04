@@ -12,5 +12,8 @@
     "moduleResolution": "Node",
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
+//baru ditambahin buat dotenv
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
   }
 }
