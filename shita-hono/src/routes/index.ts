@@ -12,24 +12,19 @@ import prisma from '../../prisma/client/index';
 dotenv.config();
 
 import { zValidator } from '@hono/zod-validator'
-import { OpenAPIHono } from '@hono/zod-openapi'
+import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { swaggerUI } from '@hono/swagger-ui'
 import { personSchema } from '../schemas/personSchema';
 
-const SECRET_KEY: any = process.env.KEY;
+// const SECRET_KEY: any = process.env.KEY;
 
-// type Variables = JwtVariables
-
-// const app = new Hono<{ Variables: Variables }>()
-const app = new Hono()
-// app.use('*', apiKeyAuth)
+const app = new OpenAPIHono()
 
 app.post('/login', loginUser);
 
-app.use('/data/*', jwt({ secret: SECRET_KEY }));
+// app.use('/data/*', jwt({ secret: SECRET_KEY }));
 
 app.get('/shita', async (c) => {
-    // const auth = await db.query.Auth.findFirst()
     const auth = await prisma.auth.findFirst()
   if (auth) {
       return c.json(
@@ -42,8 +37,6 @@ app.get('/shita', async (c) => {
   }
 })
 
-
-
 app.get('/data', (c) => getPerson(c));
 app.post('/data',
     zValidator('json', personSchema),
@@ -55,6 +48,66 @@ app.put('/data/:id',
     (c) => updatePerson(c)
 );
 app.delete('/data/:id', (c) => deletePerson(c));
+
+app.openapi(
+  createRoute({
+    method: 'get',
+    path: '/hello',
+    responses: {
+      200: {
+        description: 'Respond a message',
+        content: {
+          'application/json': {
+            schema: z.object({
+              message: z.string()
+            })
+          }
+        }
+      }
+    }
+  }),
+  (c) => {
+    return c.json({
+      message: 'hello'
+    })
+  }
+)
+
+const route = createRoute({
+  method: 'get',
+  path: '/api/person/data',
+  responses: {
+      200: {
+          description: 'Get all persons',
+          content: {
+              'application/json': {
+                  schema: z.array(personSchema),
+              },
+          },
+      },
+      500: {
+          description: 'Internal Server Error',
+          content: {
+              'application/json': {
+                  schema: z.object({ error: z.string() }),
+              },
+          },
+      },
+  },
+});
+
+app.openapi(route, getPerson);
+
+app.doc('/doc', {
+    openapi: '3.0.0',
+    info: {
+        title: 'User API',
+        version: '1.0.0',
+        description: 'API untuk mengelola data pengguna',
+    },
+})
+
+app.get('/ui', swaggerUI({ url: '/api/person/doc' }));
 
 
 export const Routes = app;

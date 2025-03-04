@@ -7,16 +7,17 @@ import prisma from "../../prisma/client/index";
  * Getting all posts
  */
 export const getPerson = async (c: Context) => {
-    try {
-        //get all posts
-        const person = await prisma.person.findMany({ orderBy: { id: 'asc' } });
-        // const data = await db.select().from(Person);
-        //return JSON
-        return c.json(person);
+  try {
+      //get all posts
+      const person = await prisma.person.findMany({ orderBy: { id: 'asc' } });
+      // const data = await db.select().from(Person);
+      //return JSON
+      return c.json(person, 200);
 
-    } catch (e: unknown) {
-        console.error(`Error getting posts: ${e}`);
-    }
+  } catch (e: unknown) {
+      console.error(`Error getting posts: ${e}`);
+      return c.json({ error: "Internal Server Error" }, 500);
+  }
 }
 
 export async function createPerson(c: Context) {
